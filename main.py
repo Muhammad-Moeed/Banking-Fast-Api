@@ -24,7 +24,7 @@ class DepositRequest(BaseModel):
 class WithdrawRequest(BaseModel):
     amount: float
 
-@app.post("/authenticate")
+@app.post("/authenticate", tags=["Banking API"])
 async def authenticate(user: User):
     """
     Authenticates a user and returns their bank balance.
@@ -35,7 +35,7 @@ async def authenticate(user: User):
         raise HTTPException(status_code=401, detail="Invalid pin number")
     return {"name": user.name, "bank_balance": db[user.name]["bank_balance"]}
 
-@app.post("/bank-transfer")
+@app.post("/bank-transfer", tags=["Banking API"])
 async def bank_transfer(transfer: Transfer):
     """
     Transfers an amount from one user to another and authenticates the receiver.
@@ -58,7 +58,7 @@ async def bank_transfer(transfer: Transfer):
 
 current_user = "moeed" # Simulating an authenticated user for these endpoints
 
-@app.get("/balance/{username}")
+@app.get("/balance/{username}", tags=["Banking API"])
 async def get_balance(username: str):
     if username not in db:
         raise HTTPException(status_code=404, detail="User not found")
@@ -66,7 +66,7 @@ async def get_balance(username: str):
         raise HTTPException(status_code=403, detail="Access denied")
     return {"username": username, "balance": db[username]["bank_balance"]}
 
-@app.post("/deposit/{username}")
+@app.post("/deposit/{username}", tags=["Banking API"])
 async def deposit(username: str, request: DepositRequest):
     if username not in db:
         raise HTTPException(status_code=404, detail="User not found")
@@ -78,7 +78,7 @@ async def deposit(username: str, request: DepositRequest):
     db[username]["bank_balance"] += request.amount
     return {"username": username, "new_balance": db[username]["bank_balance"]}
 
-@app.post("/withdraw/{username}")
+@app.post("/withdraw/{username}", tags=["Banking API"])
 async def withdraw(username: str, request: WithdrawRequest):
     if username not in db:
         raise HTTPException(status_code=404, detail="User not found")
